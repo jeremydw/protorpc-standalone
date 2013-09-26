@@ -92,8 +92,8 @@ __author__ = 'rafek@google.com (Rafe Kaplan)'
 import httplib
 import logging
 
-from .google_imports import webapp
-from .google_imports import webapp_util
+import webapp2 as webapp
+#from .google_imports import webapp_util
 from .. import messages
 from .. import protobuf
 from .. import protojson

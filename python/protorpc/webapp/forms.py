@@ -26,8 +26,12 @@ service_handlers.service_mapping function.
 
 import os
 
-from .google_imports import template
-from .google_imports import webapp
+import webapp2 as webapp
+try:
+  from .google_imports import template
+except:
+  import logging
+  logging.warning('template module not available, some features may not work.')
 
 
 __all__ = ['FormsHandler',
