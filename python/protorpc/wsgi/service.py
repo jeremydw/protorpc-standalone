@@ -203,7 +203,8 @@ def service_mapping(service_factory, service_path=r'.*', protocols=None):
 
 
 @util.positional(1)
-def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH):
+def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH,
+                     append_wsgi_apps=None):
   """Create multiple service mappings with optional RegistryService.
 
   Use this function to create single WSGI application that maps to
@@ -262,6 +263,9 @@ def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH):
   if registry_map is not None:
     final_mapping.append(service_mapping(
       registry.RegistryService.new_factory(registry_map), registry_path))
+
+  if append_wsgi_apps is not None:
+    final_mapping.extend(append_wsgi_apps)
 
   return wsgi_util.first_found(final_mapping)
 
