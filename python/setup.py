@@ -36,10 +36,10 @@ if py_version < '2.6':
 _PROTORPC_VERSION = '0.9'
 
 setuptools.setup(
-    name='protorpc',
+    name='protorpc-standalone',
     version=_PROTORPC_VERSION,
-    description='Google Protocol RPC',
-    url='http://code.google.com/p/google-protorpc/',
+    description='Google Protocol RPC (modified to run outside Google App Engine)',
+    url='https://github.com/jeremydw/protorpc-standalone',
     author='Google Inc.',
     author_email='rafek@google.com',
     # Contained modules and scripts.
