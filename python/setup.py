@@ -17,9 +17,6 @@
 """Setup configuration."""
 
 import platform
-
-from ez_setup import use_setuptools
-use_setuptools()
 import setuptools
 
 # Configure the required packages and scripts to install, depending on
