@@ -24,6 +24,7 @@ __author__ = 'rafek@google.com (Rafe Kaplan)'
 
 import httplib
 import re
+import webapp2
 
 from .. import util
 
@@ -101,10 +102,6 @@ def error(status_code, status_message=None,
 
   Creates a static error page specifically for non-200 HTTP responses.
 
-  Browsers such as Internet Explorer will display their own error pages for
-  error content responses smaller than 512 bytes.  For this reason all responses
-  are right-padded up to 512 bytes.
-
   Error pages that are not provided will content will contain the standard HTTP
   status message as their content.
 
@@ -121,15 +118,13 @@ def error(status_code, status_message=None,
   if content is None:
     content = status_message
 
-  content = util.pad_string(content)
-
   return static_page(content,
                      status=(status_code, status_message),
                      content_type=content_type,
                      headers=headers)
 
 
-def first_found(apps):
+def first_found(apps, service_prefix=None):
   """Serve the first application that does not response with 404 Not Found.
 
   If no application serves content, will respond with generic 404 Not Found.
@@ -140,6 +135,8 @@ def first_found(apps):
       in this list must not modify the environment or any objects in it if they
       do not match.  Applications that do not obey this restriction can create
       unpredictable results.
+    service_prefix: Runs "first found" logic only when request paths begin with
+      this prefix.  When None, "first found" logic occurs for all requests.
 
   Returns:
     Compound application that serves the contents of the first application that
@@ -169,10 +166,17 @@ def first_found(apps):
       final_result['status'] = status
       final_result['response_headers'] = response_headers
 
-    for app in apps:
-      response = app(environ, first_found_start_response)
-      if final_result:
-        start_response(final_result['status'], final_result['response_headers'])
+    if service_prefix is None or environ['PATH_INFO'].startswith(service_prefix):
+      for app in apps:
+        response = app(environ, first_found_start_response)
+        if final_result:
+          start_response(final_result['status'], final_result['response_headers'])
+          return response
+    else:
+      for app in apps:
+        if not isinstance(app, webapp2.WSGIApplication):
+          continue
+        response = app(environ, start_response)
         return response
 
     return not_found(environ, start_response)

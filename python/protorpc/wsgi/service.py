@@ -204,7 +204,7 @@ def service_mapping(service_factory, service_path=r'.*', protocols=None):
 
 @util.positional(1)
 def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH,
-                     append_wsgi_apps=None):
+                     service_prefix=None, append_wsgi_apps=None):
   """Create multiple service mappings with optional RegistryService.
 
   Use this function to create single WSGI application that maps to
@@ -230,6 +230,9 @@ def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH,
       service_factory: A service class or service instance factory.
     registry_path: A string to change where the registry is mapped (the default
       location is '/protorpc').  When None, no registry is created or mounted.
+    service_prefix: Runs "first found" logic only when request paths begin with
+      this prefix.  When None, "first found" logic occurs for all requests.
+    append_wsgi_apps: Additional WSGI apps to run.
 
   Returns:
     WSGI application that serves ProtoRPC services on their respective URLs
@@ -267,5 +270,5 @@ def service_mappings(services, registry_path=DEFAULT_REGISTRY_PATH,
   if append_wsgi_apps is not None:
     final_mapping.extend(append_wsgi_apps)
 
-  return wsgi_util.first_found(final_mapping)
+  return wsgi_util.first_found(final_mapping, service_prefix=service_prefix)
 
